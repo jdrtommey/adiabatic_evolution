@@ -51,8 +51,8 @@ class Diagonaliser:
             
         elif sparse_engine == False and matrix_type != np.ndarray:
             try:
-                h0_converted = np.asarray(h0)
-                h1_converted = np.asarray(h1)
+                h0_converted = h0.toarray()
+                h1_converted = h1.toarray()
             except:
                 raise ValueError("Failed to convert matrices into dense format.")
         else:

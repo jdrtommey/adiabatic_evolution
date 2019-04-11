@@ -20,7 +20,7 @@ class Matcher:
             chose which matching algorithim to apply
             
         """        
-        self.available_methods = {'vec':vector_algorithim,'basic':basic_algorithim}    #maintains a list of the current methods which have been written
+        self.available_methods = {'vec':vector_algorithim,'basic':basic_algorithim,'energy':energy_algorithim}    #maintains a list of the current methods which have been written
         try:
             self.func = self.available_methods[method]        
         except:
@@ -67,7 +67,7 @@ def length_checker(state_list,current_length):
 
     
 @jit
-def vector_algorithim(state_list,vals,vecs,param,x=0.05):
+def vector_algorithim(state_list,vals,vecs,param,x=0.2):
     """
     For each state in the current set of adiabatic states, computes a range of x% around the current eigenenergy 
     and coefficient of its initial state, searches all the eigenvals and vecs stored in vals and vecs
@@ -84,7 +84,7 @@ def vector_algorithim(state_list,vals,vecs,param,x=0.05):
         lowerbound_energy = predicted_energy * (1-x)
         energy_range = [lowerbound_energy,upperbound_energy]
             
-        predicted_coeff = state.get_current_coefficient()
+        predicted_coeff = state.get_current_coefficient()            
         upperbound_coeff = abs(predicted_coeff) * (1+x)
         lowerbound_coeff = abs(predicted_coeff) * (1-x)
         coeff_range = [upperbound_coeff,lowerbound_coeff]
@@ -126,4 +126,38 @@ def basic_algorithim(state_list,vals,vecs,param):
         except:
             raise IndexError("Index error assigning  eigenvalue index "+ str(i) + " to adibatic state")
         
+    return state_list
+
+
+@jit
+def energy_algorithim(state_list,vals,vecs,param,x=0.05):
+    """
+    For each state in the current set of adiabatic states, computes a range of x% around the current eigenenergy 
+    and coefficient of its initial state, searches all the eigenvals and vecs stored in vals and vecs
+    if it finds a state which if within the bounds of both value and coeffieicnt adds
+    it too a candidate state list. If this list only has a single entry it adds this vector to the 
+    adiaabatic state and places the vector in a taken list to stop it being compared to future 
+    states.
+    """
+    taken_list = [] #stores the index of vals which have been assigned
+    for state in state_list:
+        candidate_list =[]
+        predicted_energy = state.get_current_value()
+        upperbound_energy = predicted_energy * (1+x)
+        lowerbound_energy = predicted_energy * (1-x)
+        energy_range = [lowerbound_energy,upperbound_energy]
+
+            
+        for i,val in enumerate(vals):
+            if i not in taken_list: 
+                vec_coeff = abs(vecs[state.index,i])
+                if val < np.max(energy_range) and val > np.min(energy_range):
+                            candidate_list.append(i)  
+
+        if len(candidate_list) > 0:
+            vec_index = candidate_list[0]
+            state.add(vals[vec_index],vecs[:,vec_index],param)
+            taken_list.append(vec_index)
+
+                
     return state_list

@@ -47,7 +47,7 @@ class State_initialiser:
         try:
             diags = H0.diagonal()
         except:
-            raise TypeError("Hamiltonian not in either csr or numpy format.")
+            raise TypeError("Could not take diagonal of matrix.")
         return diags
     
     def add_states(self,diagonals):

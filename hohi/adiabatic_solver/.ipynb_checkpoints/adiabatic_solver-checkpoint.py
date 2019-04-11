@@ -101,24 +101,26 @@ def init_sigma_checker(sig_method,target,ratio,dimension):
         raise ValueError("sigma_checker method must be string, not:" + str(type(method)))
             
     #if target provided but ratio not make ratio equal amount of each
-    if type(target)  != None and ratio == None:
-        print('hello')
+    if type(target)  != type(None) and ratio == None:
         try:
             ratio = (1/len(target)) * np.ones(len(target))
         except:
             raise RuntimeError("failed to generate ratios")
             
-    # check ratio and target are same length   
-    if len(target) != len(ratio):
-        raise ValueError("target and ratio lists must be same length")
+    # check ratio and target are same length 
+    if type(target) != type(None) and type(ratio) != type(None):
+        if len(target) != len(ratio):
+            raise ValueError("target and ratio lists must be same length")
     
-    target = np.asarray(target)
-    ratio = np.asarray(ratio)
+
     
     #check sum of ratios basically one.
-    if abs(1 - np.sum(ratio)) > 0.00001:
-        raise ValueError("Ratios must sum to 1.0, " + str(np.sum(ratio)))
+    if type(ratio) != type(None):
+        if abs(1 - np.sum(ratio)) > 0.00001:
+            raise ValueError("Ratios must sum to 1.0, " + str(np.sum(ratio)))
         
+    target = np.asarray(target)
+    ratio = np.asarray(ratio)
     return Sigma_gen(sig_method,target,ratio)
         
 def init_adibatic_state(energy_list,index_list,dimension):
