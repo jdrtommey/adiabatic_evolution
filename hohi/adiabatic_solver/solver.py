@@ -19,13 +19,13 @@ class Solver:
         self.Sigma_guesser = Sigma_guesser
         self.Diagonaliser = Diagonaliser
         self.State_init = State_init
-        self.state_list= self.State_init(self.Diagonaliser.h0)
 
     def mainloop(self):
             """
             performs each iteration, calculates what the next sigma should be, calls the methods
             to pair the eigenvectors to the adiabatic ones.
             """
+            state_list= self.State_init(self.Diagonaliser.h0)
             sigma = self.sigma_init
             all_failures = []
             for p in tqdm(self.parameters):
@@ -40,3 +40,20 @@ class Solver:
                     raise RuntimeError("No adiabatic states left to calculate")
             
             return self.state_list,all_failures #at end of cycle return the final list of adiabatic states calculated.
+        
+        
+    def doloop(self):
+        """
+        take a max value and initial guess, 
+        """
+        state_list = self.State_init(self.Diagonaliser.h0)
+        failed_list = []
+        
+        while parameter < parameter_maximum:
+            vals,vecs = self.Diagonaliser(parameter,sigma)  #compute vals/vecs
+            successful_matches,failed_matches = self.Matcher(state_list,vals,vecs,parameter) #pair eigenvals to adiabatic states
+            
+            for failure in failed_matches:
+                failed_list.append([failure,parameter])
+            sigma = self.Sigma_guesser(sigma,state_list)               #update the sigma guess
+            parameter = self.parameter_updater(state_list,fail_list)   #compute a new paramter value
