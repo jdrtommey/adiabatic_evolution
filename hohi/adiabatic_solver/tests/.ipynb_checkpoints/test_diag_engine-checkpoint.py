@@ -1,4 +1,4 @@
-from ..diag_engine import Diagonaliser
+from ..plugins.diag_engine import Diagonaliser
 import pytest
 import numpy as np
 from scipy.sparse import csr_matrix,isspmatrix,coo_matrix

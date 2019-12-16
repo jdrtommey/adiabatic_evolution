@@ -1,5 +1,5 @@
 import pytest
-from ..sigma_guesser import *
+from ..plugins.sigma_guesser import *
 from ..adiabatic_state import Adiabatic
 
 @pytest.mark.xfail(raises=KeyError)

@@ -1,4 +1,4 @@
-from .adiabatic_state import Adiabatic
+from ..adiabatic_state import Adiabatic
 from scipy.sparse.linalg import eigs
 from scipy.sparse import csr_matrix,isspmatrix
 from numpy.linalg import eigh

@@ -20,7 +20,8 @@ class Matcher:
             chose which matching algorithim to apply
             
         """        
-        self.available_methods = {'vec':vector_algorithim,'basic':basic_algorithim,'energy':energy_algorithim}    #maintains a list of the current methods which have been written
+        self.available_methods = {'vec':vector_algorithim,'basic':basic_algorithim,'energy':energy_algorithim,\
+                                 'circ':circular_algorithim}    #maintains a list of the current methods which have been written
         try:
             self.func = self.available_methods[method]        
         except:
@@ -67,7 +68,7 @@ def length_checker(state_list,current_length):
 
     
 @jit
-def vector_algorithim(state_list,vals,vecs,param,x=0.2):
+def vector_algorithim(state_list,vals,vecs,param,x=0.01):
     """
     For each state in the current set of adiabatic states, computes a range of x% around the current eigenenergy 
     and coefficient of its initial state, searches all the eigenvals and vecs stored in vals and vecs
@@ -84,7 +85,7 @@ def vector_algorithim(state_list,vals,vecs,param,x=0.2):
         lowerbound_energy = predicted_energy * (1-x)
         energy_range = [lowerbound_energy,upperbound_energy]
             
-        predicted_coeff = state.get_current_coefficient()
+        predicted_coeff = state.get_current_coefficient()            
         upperbound_coeff = abs(predicted_coeff) * (1+x)
         lowerbound_coeff = abs(predicted_coeff) * (1-x)
         coeff_range = [upperbound_coeff,lowerbound_coeff]
@@ -101,8 +102,9 @@ def vector_algorithim(state_list,vals,vecs,param,x=0.2):
             state.add(vals[vec_index],vecs[:,vec_index],param)
             taken_list.append(vec_index)
         elif len(candidate_list) > 1:
-            print("change this, need logic for if two or more matches")
-                
+            vec_index = candidate_list[0]
+            state.add(vals[vec_index],vecs[:,vec_index],param)
+            taken_list.append(vec_index)
     return state_list
                 
 #########################
@@ -127,6 +129,13 @@ def basic_algorithim(state_list,vals,vecs,param):
             raise IndexError("Index error assigning  eigenvalue index "+ str(i) + " to adibatic state")
         
     return state_list
+
+#########################
+#                       #
+#    basic  algoithim   #
+#                       # 
+#                       #
+#########################
 
 
 @jit
@@ -160,4 +169,29 @@ def energy_algorithim(state_list,vals,vecs,param,x=0.05):
             taken_list.append(vec_index)
 
                 
+    return state_list
+
+
+#########################
+#                       #
+# circular  algoithim   #
+#                       # 
+#                       #
+#########################
+
+@jit 
+def circular_algorithim(state_list,vals,vecs,param):
+    """
+    alogorithim specifically written to find circular states, where the 
+    s state above is also being calculated.
+    Assumes the largest returned eigenstate is always a given state.s
+    """
+    
+    idx = vals.argsort()  #first sort the returned eigens from biggest to largest
+    eigenValues = vals[idx]
+    eigenVectors = vecs[:,idx]
+    
+    for i,state in enumerate(state_list):
+        state.add(vals[i],vecs[:,i],param)
+        
     return state_list

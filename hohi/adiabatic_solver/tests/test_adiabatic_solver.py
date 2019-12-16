@@ -1,5 +1,5 @@
 from ..adiabatic_solver import *
-from ..state_init import *
+from ..plugins.state_init import *
 import pytest
 import numpy as np
 from scipy.sparse import csr_matrix,isspmatrix,coo_matrix

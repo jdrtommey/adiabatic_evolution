@@ -1,4 +1,4 @@
-from ..state_init import *
+from ..plugins.state_init import *
 import pytest
 import numpy as np
 State_initialiser

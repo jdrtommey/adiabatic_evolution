@@ -1,13 +1,13 @@
 from scipy.sparse import isspmatrix
-from .state_init import State_initialiser   #gnerates the initial adiabatic states to track
-from .sigma_guesser import Sigma_gen        #determines how the eigenstate guess should change
-from .diag_engine import Diagonaliser       #determines which diagonalisation routine to use
-from .state_matcher import Matcher          #algorithims to determine if adibatic state has been found
+from .plugins.state_init import State_initialiser   #gnerates the initial adiabatic states to track
+from .plugins.sigma_guesser import Sigma_gen        #determines how the eigenstate guess should change
+from .plugins.diag_engine import Diagonaliser       #determines which diagonalisation routine to use
+from .plugins.state_matcher import Matcher          #algorithims to determine if adibatic state has been found
 from .solver import Solver
 import numpy as np
 
 class Adiabatic_solver:
-    def __init__(self,h0,h1,parameters,sigma,num_eigs = None,return_vecs=True,algorithim='basic',return_failed = False,\
+    def __init__(self,h0,h1,parameters,sigma = 0.0,num_eigs = None,return_vecs=True,algorithim='basic',return_failed = False,\
                  energy_list = None,index_list = None,sig_method = 'static',target=None,ratio=None):
         """
         The interface which user interacts with. It generates all the classes which are
@@ -98,7 +98,7 @@ def init_sigma_checker(sig_method,target,ratio,dimension):
     """
     #check method is a string
     if type(sig_method) != str:
-        raise ValueError("sigma_checker method must be string, not:" + str(type(method)))
+        raise ValueError("sigma_checker method must be string, not:" + str(type(sig_method)))
             
     #if target provided but ratio not make ratio equal amount of each
     if type(target)  != type(None) and ratio == None:

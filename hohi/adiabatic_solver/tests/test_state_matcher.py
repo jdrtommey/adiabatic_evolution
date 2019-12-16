@@ -1,4 +1,4 @@
-from ..state_matcher import *
+from ..plugins.state_matcher import *
 from ..adiabatic_state import Adiabatic
 import pytest
 import numpy as np

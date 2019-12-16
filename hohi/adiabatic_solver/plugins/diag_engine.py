@@ -21,12 +21,14 @@ class Diagonaliser:
         h1: matrix
             the interaction matrix
         """
-        
-        self.num_eigs = num_eigs
+        if num_eigs == None:
+            self.num_eigs = h0.shape[0]
+        else:
+            self.num_eigs = num_eigs
         self.return_vecs = return_vecs
         
         # based on the number of eigenvalues requested determine if possible to use sparse
-        if num_eigs <= (h0.shape[0] - 2):
+        if self.num_eigs <= (h0.shape[0] - 2):
             self.sparse = True
         else:
             self.sparse = False
